@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour Aya ✦</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold:   #c8a44a;
+            --red:    #8b2c2c;
+            --dark:   #0a0807;
+            --paper:  #f5f0e8;
+            --ink:    #1a1410;
+            --strip-h: 54px;
+        }
+
+        body {
+            background: var(--dark);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Film grain */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+            opacity: 0.45;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* ── Film strips ── */
+        .strip {
+            position: fixed;
+            left: 0; right: 0;
+            height: var(--strip-h);
+            background: #0f0c09;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 8px;
+            overflow: hidden;
+        }
+        .strip-top { top: 0; border-bottom: 2px solid #1c1710; }
+        .strip-bot { bottom: 0; border-top:  2px solid #1c1710; }
+
+        .hole {
+            min-width: 28px;
+            height: 32px;
+            background: var(--dark);
+            border-radius: 3px;
+            flex-shrink: 0;
+            border: 1px solid #1a150f;
+        }
+
+        /* ── SCREENS ── */
+        .screen {
+            min-height: 100vh;
+            padding: calc(var(--strip-h) + 40px) 20px calc(var(--strip-h) + 40px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ═══════════════════════════
+           SCREEN 1 — EID
+        ═══════════════════════════ */
+        #eid {
+            text-align: center;
+            background: radial-gradient(ellipse at center, #1a120a 0%, var(--dark) 70%);
+        }
+
+        .eid-crescent {
+            font-size: 5rem;
+            animation: moonGlow 3s ease-in-out infinite;
+            display: block;
+            margin-bottom: 12px;
+        }
+        @keyframes moonGlow {
+            0%,100% { filter: drop-shadow(0 0 8px var(--gold));  transform: scale(1); }
+            50%     { filter: drop-shadow(0 0 28px var(--gold)); transform: scale(1.08); }
+        }
+
+        .eid-sub {
+            font-size: .65rem;
+            letter-spacing: .5em;
+            color: #5a4a2a;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .eid-title {
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(3rem, 12vw, 8rem);
+            line-height: .88;
+            text-transform: uppercase;
+            letter-spacing: -.01em;
+        }
+        .eid-title .gold { color: var(--gold); }
+
+        .eid-arabic {
+            margin-top: 20px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(1rem, 3vw, 1.6rem);
+            color: var(--gold);
+            opacity: .75;
+            letter-spacing: .06em;
+        }
+
+        .eid-msg {
+            margin-top: 28px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(.85rem, 2vw, 1.05rem);
+            color: #5a4a2a;
+            max-width: 520px;
+            line-height: 1.8;
+        }
+
+        .eid-divider { color: var(--gold); letter-spacing: .5em; margin: 32px 0 28px; font-size: .9rem; }
+
+        .btn-dossier {
+            padding: 16px 60px;
+            background: var(--gold);
+            color: #0a0807;
+            border: none;
+            font-family: 'Anton', sans-serif;
+            font-size: 1rem;
+            letter-spacing: .16em;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background .25s, transform .2s;
+        }
+        .btn-dossier:hover { background: #e0b85a; transform: scale(1.04); }
+
+        /* ═══════════════════════════
+           SCREEN 2 — DOSSIER
+        ═══════════════════════════ */
+        #dossier {
+            display: none;
+            padding-top: calc(var(--strip-h) + 32px);
+            padding-bottom: calc(var(--strip-h) + 60px);
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .paper {
+            background: var(--paper);
+            color: var(--ink);
+            max-width: 760px;
+            width: 100%;
+            border-radius: 2px;
+            padding: 60px 56px 56px;
+            font-family: 'Special Elite', monospace;
+            position: relative;
+            box-shadow:
+                0 0 0 1px rgba(200,164,74,.15),
+                0 4px 60px rgba(0,0,0,.7);
+            animation: unfold .9s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        @keyframes unfold {
+            from { opacity:0; transform: translateY(24px) scaleY(.97); }
+            to   { opacity:1; transform: translateY(0)    scaleY(1); }
+        }
+
+        /* Stamp */
+        .stamp {
+            position: absolute;
+            top: 44px; right: 52px;
+            border: 3px solid var(--red);
+            color: var(--red);
+            font-family: 'Anton', sans-serif;
+            font-size: .62rem;
+            letter-spacing: .3em;
+            padding: 7px 12px;
+            transform: rotate(5deg);
+            opacity: .75;
+            border-radius: 2px;
+        }
+
+        /* Watermark */
+        .watermark {
+            position: absolute;
+            inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Anton', sans-serif;
+            font-size: 6rem;
+            color: rgba(200,164,74,.06);
+            transform: rotate(-25deg);
+            pointer-events: none;
+            letter-spacing: .1em;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .doc-header {
+            text-align: center;
+            border-bottom: 2px solid var(--ink);
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+        .doc-ref {
+            font-size: .58rem;
+            letter-spacing: .3em;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .doc-title {
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(1.4rem, 4vw, 2.4rem);
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin: 8px 0 4px;
+            color: var(--ink);
+        }
+        .doc-objet {
+            font-size: .78rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Sections */
+        .section { margin-bottom: 32px; }
+        .section-title {
+            font-family: 'Anton', sans-serif;
+            font-size: .72rem;
+            letter-spacing: .38em;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 6px;
+            margin-bottom: 14px;
+            color: #444;
+        }
+
+        .field {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 9px;
+            font-size: .84rem;
+            line-height: 1.55;
+            flex-wrap: wrap;
+        }
+        .field-label {
+            min-width: 190px;
+            color: #888;
+            font-size: .76rem;
+            letter-spacing: .04em;
+        }
+        .field-value {
+            flex: 1;
+            color: var(--ink);
+            min-width: 180px;
+        }
+        .field-value em {
+            font-style: italic;
+            color: #666;
+            font-size: .82rem;
+        }
+        .field-value strong {
+            font-weight: 700;
+        }
+        .field-value .red { color: var(--red); }
+        .field-value .nota {
+            font-size: .72rem;
+            color: var(--red);
+            font-style: italic;
+        }
+
+        /* Rebuttal box */
+        .rebuttal {
+            background: rgba(139,44,44,.05);
+            border-left: 3px solid var(--red);
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            border-radius: 0 2px 2px 0;
+        }
+        .rebuttal .objection {
+            font-size: .72rem;
+            color: #999;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .rebuttal .response {
+            font-size: .84rem;
+            line-height: 1.65;
+            color: var(--ink);
+        }
+
+        /* Evidence list */
+        .evidence-list { list-style: none; }
+        .evidence-list li {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: .84rem;
+            line-height: 1.55;
+            color: var(--ink);
+        }
+        .evidence-list li::before {
+            content: '✓';
+            color: #2a6a2a;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        /* Debt box */
+        .debt-box {
+            border: 2px solid var(--gold);
+            padding: 18px 22px;
+            border-radius: 2px;
+            background: rgba(200,164,74,.04);
+        }
+        .debt-box .debt-title {
+            font-family: 'Anton', sans-serif;
+            font-size: .65rem;
+            letter-spacing: .3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        .debt-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: .82rem;
+            color: var(--ink);
+            padding: 4px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+        .debt-item:last-of-type { border-bottom: none; }
+        .debt-amount { color: var(--red); font-weight: 700; }
+        .debt-total {
+            margin-top: 10px;
+            text-align: right;
+            font-size: .76rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* ── VERDICT ── */
+        .verdict {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 2px solid var(--ink);
+            text-align: center;
+        }
+        .verdict-label {
+            font-family: 'Anton', sans-serif;
+            font-size: .65rem;
+            letter-spacing: .5em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 16px;
+        }
+        .verdict-text {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(.92rem, 2.2vw, 1.08rem);
+            color: #444;
+            line-height: 1.8;
+            max-width: 580px;
+            margin: 0 auto 28px;
+        }
+
+        .verdict-btns {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .btn-accept {
+            padding: 15px 56px;
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            font-family: 'Anton', sans-serif;
+            font-size: 1rem;
+            letter-spacing: .14em;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background .25s, transform .3s;
+            z-index: 20;
+            position: relative;
+        }
+        .btn-accept:hover { background: #2a2010; transform: scale(1.04); }
+
+        .btn-refuse {
+            padding: 15px 56px;
+            background: transparent;
+            color: #aaa;
+            border: 2px solid #ccc;
+            font-family: 'Anton', sans-serif;
+            font-size: 1rem;
+            letter-spacing: .14em;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: color .2s, border-color .2s, left .15s ease, top .15s ease;
+            position: relative;
+        }
+
+        /* ── FINAL MESSAGE ── */
+        #final-msg {
+            display: none;
+            text-align: center;
+            padding: calc(var(--strip-h) + 40px) 40px calc(var(--strip-h) + 40px);
+            animation: fadeUp .9s cubic-bezier(.22,1,.36,1) forwards;
+        }
+        @keyframes fadeUp {
+            from { opacity:0; transform: translateY(24px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        .final-crescent { font-size: 3.5rem; display: block; margin-bottom: 16px; animation: moonGlow 3s ease-in-out infinite; }
+        .final-big {
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(2.4rem, 8vw, 5.5rem);
+            line-height: .88;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+        .final-big .gold { color: var(--gold); }
+        .final-body {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(.9rem, 2vw, 1.05rem);
+            color: #aaa;
+            line-height: 2;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .final-body strong { color: #fff; font-style: normal; }
+        .final-body em { color: var(--gold); }
+        .final-sign {
+            margin-top: 40px;
+            font-size: .7rem;
+            letter-spacing: .2em;
+            color: #3a3020;
+            line-height: 2;
+        }
+        .final-sign span { color: var(--gold); }
+
+        /* Sparkles */
+        .fspark {
+            position: fixed;
+            pointer-events: none;
+            animation: floatUp 5s ease-in-out forwards;
+            z-index: 998;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0%   { opacity:0;  transform: translateY(0) rotate(0deg) scale(.8); }
+            12%  { opacity:1; }
+            88%  { opacity:.7; }
+            100% { opacity:0;  transform: translateY(-160px) rotate(400deg) scale(1.3); }
+        }
+
+        @keyframes goOut   { to { opacity:0; transform: translateY(-12px); } }
+        .go { animation: goOut .4s ease forwards; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0807; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="strip strip-top" id="st"></div>
+    <div class="strip strip-bot" id="sb"></div>
+
+    <!-- ══════════════ SCREEN 1 — EID ══════════════ -->
+    <div class="screen" id="eid">
+        <span class="eid-crescent">☽</span>
+        <div class="eid-sub">✦ &nbsp; Kingshot → Belgique &nbsp; ✦</div>
+        <h1 class="eid-title">
+            EID<br>
+            MOUBARAK<br>
+            <span class="gold">AYA</span>
+        </h1>
+        <div class="eid-arabic">عيد مبارك وكل عام وأنتِ بخير</div>
+        <p class="eid-msg">
+            Que cette journée te soit douce, lumineuse — et que tu saches
+            qu'il y a quelqu'un quelque part en Belgique qui pense à toi en ce jour.
+        </p>
+        <div class="eid-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+        <button class="btn-dossier" onclick="openDossier()">VOIR LE DOSSIER &nbsp;→</button>
+    </div>
+
+    <!-- ══════════════ SCREEN 2 — DOSSIER ══════════════ -->
+    <div class="screen" id="dossier">
+
+        <div class="paper" id="paperDoc">
+
+            <div class="watermark">CONFIDENTIEL</div>
+            <div class="stamp">CONFIDENTIEL</div>
+
+            <!-- EN-TÊTE -->
+            <div class="doc-header">
+                <div class="doc-ref">Réf. : KS-2025/AYA · Classification : Usage Strictement Personnel</div>
+                <div class="doc-title">Dossier de Candidature</div>
+                <div class="doc-objet">
+                    Objet : Demande d'autorisation officielle de te connaître davantage,<br>
+                    dans un cadre professionnel, amical, et/ou romantique<br>
+                    <em style="color:#aaa;font-size:.76rem;">( rayer la mention inutile — ou garder les trois )</em>
+                </div>
+            </div>
+
+            <!-- I. PROFIL CANDIDAT -->
+            <div class="section">
+                <div class="section-title">I — Profil du Candidat</div>
+
+                <div class="field">
+                    <span class="field-label">Nom :</span>
+                    <span class="field-value"><strong>Jules</strong></span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Nationalité :</span>
+                    <span class="field-value">Français 🇫🇷 &nbsp;·&nbsp; <em>temporairement belge par obligation de stage</em></span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Lieu actuel :</span>
+                    <span class="field-value"><strong>Mons, Belgique</strong> &nbsp;·&nbsp; <em>à environ 40 min de Charleroi, donc de toi</em></span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Âge (déclaré) :</span>
+                    <span class="field-value"><strong>22 ans</strong> &nbsp;·&nbsp; <em class="red">voir Section II pour les objections à ce sujet</em></span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Première rencontre :</span>
+                    <span class="field-value">Kingshot &nbsp;·&nbsp; <em>le jeu où tu m'as clairement laissé gagner pour ne pas blesser mon ego</em></span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Promesses non tenues :</span>
+                    <span class="field-value">1 session COD prévue, 0 session COD jouée &nbsp;·&nbsp; <em>dossier toujours ouvert</em></span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Voix :</span>
+                    <span class="field-value">Standard &nbsp;·&nbsp; <em>la tienne en revanche est classée "arme de destruction massive" — voir annexe audio</em></span>
+                </div>
+            </div>
+
+            <!-- II. OBJECTIONS -->
+            <div class="section">
+                <div class="section-title">II — Réfutation des Objections Soulevées</div>
+
+                <div class="rebuttal">
+                    <div class="objection">Objection n°1 · Écart d'âge (6 ans)</div>
+                    <div class="response">
+                        L'écart de 6 ans représente aujourd'hui exactement <strong>2 190 jours</strong>.
+                        À titre de comparaison : la différence entre un vin de table et un grand cru.
+                        Entre un iPhone 14 et un iPhone 16. Entre Netflix en SD et Netflix en 4K.
+                        La question n'est donc pas <em>combien d'années</em>, mais <em>quelle qualité d'années</em>.
+                        <span class="nota">→ Objection réfutée par la jurisprudence Qualité vs Quantité (Jules, 2025)</span>
+                    </div>
+                </div>
+
+                <div class="rebuttal">
+                    <div class="objection">Objection n°2 · "Il est trop jeune"</div>
+                    <div class="response">
+                        Le candidat effectue un <strong>stage à l'étranger à 22 ans</strong>, gère son budget seul,
+                        prend des décisions de manière autonome, et — fait remarquable — a été capable de
+                        rédiger un dossier juridique complet pour une marocaine rencontrée sur un jeu mobile.
+                        Le niveau de maturité est donc clairement supérieur à la moyenne de l'échantillon démographique concerné.
+                        <span class="nota">→ Objection réfutée par les pièces justificatives ci-jointes (le présent document)</span>
+                    </div>
+                </div>
+
+                <div class="rebuttal">
+                    <div class="objection">Objection n°3 · "Ça ne peut pas marcher"</div>
+                    <div class="response">
+                        Tu habites à <strong>40 minutes de Mons</strong>. Il y a des verres à rembourser.
+                        Une partie de COD à honorer. Et une connexion qui dure depuis plus longtemps
+                        que la plupart des relations que vous avez vues autour de vous.
+                        Statistiquement parlant, les arguments "en faveur" dépassent largement les arguments "contre".
+                        <span class="nota">→ Objection réfutée. Le dossier plaide pour lui-même.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- III. PREUVES DE MATURITÉ -->
+            <div class="section">
+                <div class="section-title">III — Preuves de Maturité Certifiées</div>
+                <ul class="evidence-list">
+                    <li>A voyagé seul à l'étranger pour un stage sans paniquer (enfin, presque)</li>
+                    <li>Lit les situations entre les lignes — n'a jamais insisté de façon lourde malgré l'envie</li>
+                    <li>Préfère une conversation authentique à 2h du matin à n'importe quelle sortie bruyante</li>
+                    <li>Sait que la gentillesse n'est pas une faiblesse — contrairement à la croyance populaire</li>
+                    <li>A pensé à toi pour l'Aïd sans qu'on lui rappelle que c'était aujourd'hui</li>
+                    <li>N'a jamais joué les bad boys parce que ce n'est tout simplement pas lui</li>
+                    <li>Voyage également au programme — la liste de destinations est déjà longue</li>
+                </ul>
+            </div>
+
+            <!-- IV. CRÉANCES -->
+            <div class="section">
+                <div class="section-title">IV — État des Créances en Cours</div>
+                <div class="debt-box">
+                    <div class="debt-title">✦ Relevé de Compte · Aya → Jules</div>
+                    <div class="debt-item">
+                        <span>Verre n°1 &nbsp;·&nbsp; <em>promis, date indéterminée</em></span>
+                        <span class="debt-amount">1 verre</span>
+                    </div>
+                    <div class="debt-item">
+                        <span>Verre n°2 &nbsp;·&nbsp; <em>promis, même date indéterminée</em></span>
+                        <span class="debt-amount">1 verre</span>
+                    </div>
+                    <div class="debt-item">
+                        <span>Session COD &nbsp;·&nbsp; <em>annulée par circonstances diverses</em></span>
+                        <span class="debt-amount">1 session</span>
+                    </div>
+                    <div class="debt-total">
+                        Total dû : <strong>2 verres + 1 session COD</strong> &nbsp;·&nbsp;
+                        Remboursement suggéré : Charleroi ou Mons, à ta convenance
+                    </div>
+                </div>
+            </div>
+
+            <!-- VERDICT -->
+            <div class="verdict">
+                <div class="verdict-label">✦ &nbsp; Verdict &nbsp; ✦</div>
+                <p class="verdict-text">
+                    Le candidat n'est pas parfait. Il a 22 ans, un accent français, et il joue encore à des jeux sur téléphone.
+                    Mais il est là, il a pris le temps d'écrire tout ça pour toi un jour d'Aïd,
+                    et quelque part entre Mons et Charleroi, il espère sincèrement te voir bientôt.
+                    <br><br>
+                    <em>À toi de décider.</em>
+                </p>
+                <div class="verdict-btns">
+                    <button class="btn-accept" id="btnAccept" onclick="showFinal()">DOSSIER ACCEPTÉ &nbsp;✦</button>
+                    <button class="btn-refuse" id="btnRefuse" onclick="handleRefuse()">REFUSER</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ══════════════ FINAL ══════════════ -->
+    <div class="screen" id="final-msg">
+        <span class="final-crescent">☽</span>
+        <div class="final-big">
+            BONNE<br>
+            DÉCISION<br>
+            <span class="gold">AYA</span>
+        </div>
+        <div class="final-body">
+            <p>Je sais que <strong>6 ans</strong> ça fait beaucoup sur le papier. Mais tu le sais aussi bien que moi — sur ce jeu, puis dans ces conversations, l'âge n'a jamais vraiment eu sa place.</p>
+            <p>Tu aimes voyager. Moi aussi. Tu kiffes les gens authentiques. Moi aussi. Et quelque part, je crois que t'as une petite curiosité, sinon t'aurais pas lu jusqu'ici.</p>
+            <p>Les <em>2 verres</em> m'attendent toujours. Le COD aussi. Et Charleroi n'est pas si loin de Mons quand on a envie de se voir.</p>
+            <p><strong>Eid Moubarak, Aya.</strong> Qu'on se voit bientôt.</p>
+        </div>
+        <div class="final-sign">
+            — Jules &nbsp;·&nbsp; <span>Mons, Belgique</span> &nbsp;·&nbsp; 40 min de toi<br>
+            Kingshot → COD → <span>IRL</span>
+        </div>
+    </div>
+
+    <script>
+        /* Film holes */
+        function buildStrip(id) {
+            const el = document.getElementById(id);
+            const n = Math.ceil(window.innerWidth / 40) + 4;
+            for (let i = 0; i < n; i++) {
+                const h = document.createElement('div');
+                h.className = 'hole';
+                el.appendChild(h);
+            }
+        }
+        buildStrip('st');
+        buildStrip('sb');
+
+        /* Eid → Dossier */
+        function openDossier() {
+            const eid = document.getElementById('eid');
+            eid.classList.add('go');
+            setTimeout(() => {
+                eid.style.display = 'none';
+                const dos = document.getElementById('dossier');
+                dos.style.display = 'flex';
+                window.scrollTo(0, 0);
+            }, 420);
+        }
+
+        /* Refuse button */
+        let refuseCount = 0;
+        let escaping = false;
+        const responses = [
+            'Relis la Section II.',
+            'Les 2 verres attendent.',
+            'Ce bouton ne fonctionne pas vraiment.',
+            'Bon ok — ça fuit maintenant.'
+        ];
+
+        function handleRefuse() {
+            const btn = document.getElementById('btnRefuse');
+            if (refuseCount < responses.length - 1) {
+                document.querySelector('.verdict-text').innerHTML =
+                    responses[refuseCount] + '<br><br><em>Dernier avertissement.</em>';
+                refuseCount++;
+                if (refuseCount >= 3) startFleeing(btn);
+            } else {
+                startFleeing(btn);
+            }
+        }
+
+        function startFleeing(btn) {
+            if (!escaping) {
+                escaping = true;
+                btn.style.position = 'fixed';
+                btn.style.zIndex   = '9999';
+                const r = btn.getBoundingClientRect();
+                btn.style.left = r.left + 'px';
+                btn.style.top  = r.top  + 'px';
+                btn.style.transition = 'left .18s ease, top .18s ease, color .2s, border-color .2s';
+            }
+            flee(btn);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnRefuse').addEventListener('mouseover', function () {
+                if (escaping) flee(this);
+            });
+        });
+
+        function flee(btn) {
+            const pad  = 60;
+            const sh   = 54;
+            const maxX = window.innerWidth  - btn.offsetWidth  - pad;
+            const maxY = window.innerHeight - btn.offsetHeight - sh  - pad;
+            const x    = pad + Math.random() * (maxX - pad);
+            const y    = sh  + pad * .5 + Math.random() * (maxY - sh);
+            btn.style.left = x + 'px';
+            btn.style.top  = y + 'px';
+        }
+
+        /* Final */
+        function showFinal() {
+            const dos = document.getElementById('dossier');
+            dos.classList.add('go');
+            setTimeout(() => {
+                dos.style.display = 'none';
+                const fin = document.getElementById('final-msg');
+                fin.style.display = 'flex';
+                window.scrollTo(0, 0);
+                spawnSparkles();
+            }, 420);
+        }
+
+        function spawnSparkles() {
+            const syms   = ['✦', '✧', '★', '☽', '✿', '♡', '✶'];
+            const colors = ['#c8a44a', '#fff', '#e8d4a0', '#d4bc78'];
+            for (let i = 0; i < 32; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'fspark';
+                    el.textContent = syms[Math.floor(Math.random() * syms.length)];
+                    el.style.left  = (1 + Math.random() * 97) + 'vw';
+                    el.style.bottom = '58px';
+                    el.style.color  = colors[Math.floor(Math.random() * colors.length)];
+                    el.style.fontSize = (.7 + Math.random() * 1.4) + 'rem';
+                    el.style.animationDelay    = (Math.random() * 2) + 's';
+                    el.style.animationDuration = (3.5 + Math.random() * 3.5) + 's';
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 9000);
+                }, i * 150);
+            }
+        }
+    </script>
+</body>
+</html>
